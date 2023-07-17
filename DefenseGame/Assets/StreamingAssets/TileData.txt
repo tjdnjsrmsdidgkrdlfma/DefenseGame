@@ -1,0 +1,25 @@
+{
+    "tile_data": [
+        {
+            "tile_id": 0,
+            "tile_type": 0,
+            "tile_sprite": {
+                "instanceID": 24920
+            }
+        },
+        {
+            "tile_id": 1,
+            "tile_type": 0,
+            "tile_sprite": {
+                "instanceID": 24922
+            }
+        },
+        {
+            "tile_id": 64,
+            "tile_type": 64,
+            "tile_sprite": {
+                "instanceID": 24920
+            }
+        }
+    ]
+}

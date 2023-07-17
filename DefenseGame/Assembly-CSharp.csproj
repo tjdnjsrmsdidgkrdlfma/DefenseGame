@@ -70,6 +70,7 @@
   <ItemGroup>
     <None Include="Assets\Packages\BetterStreamingAssets\README.txt" />
     <None Include="Assets\StreamingAssets\TestNameMapData.txt" />
+    <None Include="Assets\StreamingAssets\TileData.txt" />
     <None Include="Assets\StreamingAssets\TestNameEnemyData.txt" />
   </ItemGroup>
   <ItemGroup>

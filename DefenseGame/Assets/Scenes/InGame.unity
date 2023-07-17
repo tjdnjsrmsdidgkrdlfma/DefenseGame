@@ -366,6 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb627dfe8866d9047938d983ecc4f56e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  current_map_name: TestName
 --- !u!4 &488000155
 Transform:
   m_ObjectHideFlags: 0
@@ -687,6 +688,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47ba04be2586690489bba2748869412a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tile_data:
+    tile_data:
+    - tile_id: 0
+      tile_type: 0
+      tile_sprite: {fileID: 0}
+    - tile_id: 0
+      tile_type: 0
+      tile_sprite: {fileID: 0}
+    - tile_id: 0
+      tile_type: 0
+      tile_sprite: {fileID: 0}
   is_showing_trap_place_menu: 0
   trap_place_menu: {fileID: 555038768}
 --- !u!4 &1900038980
