@@ -4,21 +4,21 @@
             "tile_id": 0,
             "tile_type": 0,
             "tile_sprite": {
-                "instanceID": 26520
+                "instanceID": 25092
             }
         },
         {
             "tile_id": 1,
             "tile_type": 0,
             "tile_sprite": {
-                "instanceID": 26542
+                "instanceID": 25096
             }
         },
         {
             "tile_id": 64,
             "tile_type": 64,
             "tile_sprite": {
-                "instanceID": 26520
+                "instanceID": 25092
             }
         }
     ]

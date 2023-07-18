@@ -13,6 +13,7 @@ public class DataManager : MonoBehaviour
 
     const string tile_data_file_name = "TileData.json";
     const string map_data_file_name = "MapData.txt";
+    const string trap_data_file_name = "TrapData.json";
     const string enemy_data_file_name = "EnemyData.txt";
 
     void Awake()
@@ -23,6 +24,28 @@ public class DataManager : MonoBehaviour
             Destroy(this.gameObject);
 
         BetterStreamingAssets.Initialize();
+    }
+
+    public void SaveTileData(TileData tile_data)
+    {
+        string path = Application.streamingAssetsPath + "\\" + tile_data_file_name;
+        string json_data = JsonUtility.ToJson(tile_data, true);
+
+        if (File.Exists(path) == false)
+        {
+            File.Create(path).Close();
+        }
+
+        File.WriteAllText(path, json_data);
+    }
+
+    public TileData LoadTileData()
+    {
+        string path = tile_data_file_name;
+        string json_data = BetterStreamingAssets.ReadAllText(path);
+        TileData tile_data = JsonUtility.FromJson<TileData>(json_data);
+
+        return tile_data;
     }
 
     public List<List<TileDataSet>> LoadMapData()
@@ -57,6 +80,28 @@ public class DataManager : MonoBehaviour
         }
 
         return map_data;
+    }
+
+    public void SaveTrapData(TrapData trap_data)
+    {
+        string path = Application.streamingAssetsPath + "\\" + trap_data_file_name;
+        string json_data = JsonUtility.ToJson(trap_data, true);
+
+        if (File.Exists(path) == false)
+        {
+            File.Create(path).Close();
+        }
+
+        File.WriteAllText(path, json_data);
+    }
+
+    public TrapData LoadTrapData()
+    {
+        string path = trap_data_file_name;
+        string json_data = BetterStreamingAssets.ReadAllText(path);
+        TrapData tile_data = JsonUtility.FromJson<TrapData>(json_data);
+
+        return tile_data;
     }
 
     public List<List<EnemyDataSet>> LoadEnemyData()
@@ -97,27 +142,5 @@ public class DataManager : MonoBehaviour
         }
 
         return enemy_data;
-    }
-
-    public void SaveTileData(TileData tile_data)
-    {
-        string path = Application.streamingAssetsPath + "\\" + tile_data_file_name;
-        string json_data = JsonUtility.ToJson(tile_data, true);
-
-        if (File.Exists(path) == false)
-        {
-            File.Create(path).Close();
-        }
-
-        File.WriteAllText(path, json_data);
-    }
-
-    public TileData LoadTileData()
-    {
-        string path = tile_data_file_name;
-        string json_data = BetterStreamingAssets.ReadAllText(path);
-        TileData tile_data = JsonUtility.FromJson<TileData>(json_data);
-
-        return tile_data;
     }
 }

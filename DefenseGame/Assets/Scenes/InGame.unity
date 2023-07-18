@@ -719,9 +719,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47ba04be2586690489bba2748869412a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  map_tile_container: {fileID: 817972674}
   tile_data:
     tile_data: []
+  map_tile_container: {fileID: 817972674}
+  number_of_trap_place_on_floor: 0
+  number_of_trap_place_on_wall: 0
+  trap_data:
+    trap_data: []
   is_showing_trap_place_menu: 0
   trap_place_menu: {fileID: 555038768}
 --- !u!4 &1900038980

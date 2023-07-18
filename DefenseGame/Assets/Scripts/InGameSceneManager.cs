@@ -9,15 +9,7 @@ public class InGameSceneManager : MonoBehaviour
 {
     public static InGameSceneManager instance;
 
-    #region 맵 정보
-
-    public List<List<TileDataSet>> map_data;
-
-    [SerializeField] Transform map_tile_container;
-
-    #endregion
-
-    #region 타일 정보
+    #region 타일
 
     public enum TileType
     {
@@ -42,29 +34,72 @@ public class InGameSceneManager : MonoBehaviour
         public GameObject tile_sprite;
     }
 
+    [Header("타일")]
     [SerializeField] TileData tile_data;
+
     Dictionary<int, TileDataSet> tile_data_dict = new Dictionary<int, TileDataSet>();
 
     #endregion
 
-    /*#region 함정 정보
+    #region 맵
+
+    [Header("맵")]
+    [SerializeField] Transform map_tile_container;
+
+    List<List<TileDataSet>> map_data;
+
+    #endregion
+
+    #region 함정
 
     public enum TrapType
     {
         DartTrap
     }
 
+    public enum TrapPlaceType
+    {
+        Floor,
+        Wall
+    }
+
     [Serializable]
     public class TrapData
     {
-        public TrapType trap_type;
+        public List<TrapDataSet> trap_data;
     }
 
-    public List<List<TrapData>> trap_data;
+    [Serializable]
+    public class TrapDataSet
+    {
+        public TrapType trap_type;
+        public TrapPlaceType trap_place_type;
+    }
 
-    #endregion*/
+    [Header("함정")]
+    public int number_of_trap_place_on_floor;
+    public int number_of_trap_place_on_wall;
 
-    #region 적 정보
+    [SerializeField] TrapData trap_data;
+
+    #endregion
+
+    #region 함정 맵
+
+    List<List<TrapDataSet>> trap_map_data;
+
+    #endregion
+
+    #region 함정 배치 메뉴
+
+    [Header("함정 배치 메뉴")]
+    public bool is_showing_trap_place_menu;
+
+    [SerializeField] GameObject trap_place_menu;
+
+    #endregion
+
+    #region 적
 
     public class EnemyDataSet
     {
@@ -72,15 +107,7 @@ public class InGameSceneManager : MonoBehaviour
         public int number;
     }
 
-    public List<List<EnemyDataSet>> enemy_data;
-
-    #endregion
-
-    #region 함정 배치 메뉴
-
-    public bool is_showing_trap_place_menu;
-
-    [SerializeField] GameObject trap_place_menu;
+    List<List<EnemyDataSet>> enemy_data;
 
     #endregion
 
@@ -120,16 +147,26 @@ public class InGameSceneManager : MonoBehaviour
 
     void Start()
     {
-        is_showing_trap_place_menu = false;
+        InitializeVariables();
         ControlData();
         DrawMap();
+    }
+
+    void InitializeVariables()
+    {
+        is_showing_trap_place_menu = false;
     }
 
     void ControlData()
     {
         //SaveTileData();
         LoadTileData();
+
         LoadMapData();
+
+        //SaveTrapData();
+        LoadTrapData();
+
         LoadEnemyData();
     }
 
@@ -149,6 +186,31 @@ public class InGameSceneManager : MonoBehaviour
         for (int i = 0; i < tile_data.tile_data.Count; i++)
         {
             tile_data_dict.Add(tile_data.tile_data[i].tile_id, tile_data.tile_data[i]);
+        }
+    }
+
+    void SaveTrapData()
+    {
+        DataManager.instance.SaveTrapData(trap_data);
+    }
+
+    void LoadTrapData()
+    {
+        trap_data = DataManager.instance.LoadTrapData();
+        InitializeTrapVariables();
+    }
+
+    void InitializeTrapVariables()
+    {
+        number_of_trap_place_on_floor = 0;
+        number_of_trap_place_on_wall = 0;
+
+        for (int i = 0; i < Enum.GetNames(typeof(TrapType)).Length; i++)
+        {
+            if (trap_data.trap_data[i].trap_place_type == TrapPlaceType.Floor)
+                number_of_trap_place_on_floor++;
+            else if (trap_data.trap_data[i].trap_place_type == TrapPlaceType.Wall)
+                number_of_trap_place_on_wall++;
         }
     }
 
