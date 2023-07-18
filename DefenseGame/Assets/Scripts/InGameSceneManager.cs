@@ -13,6 +13,8 @@ public class InGameSceneManager : MonoBehaviour
 
     public List<List<TileDataSet>> map_data;
 
+    [SerializeField] Transform map_tile_container;
+
     #endregion
 
     #region 타일 정보
@@ -37,7 +39,7 @@ public class InGameSceneManager : MonoBehaviour
     {
         public int tile_id;
         public TileType tile_type;
-        public Sprite tile_sprite;
+        public GameObject tile_sprite;
     }
 
     [SerializeField] TileData tile_data;
@@ -120,6 +122,7 @@ public class InGameSceneManager : MonoBehaviour
     {
         is_showing_trap_place_menu = false;
         ControlData();
+        DrawMap();
     }
 
     void ControlData()
@@ -169,5 +172,23 @@ public class InGameSceneManager : MonoBehaviour
     void LoadEnemyData()
     {
         enemy_data = DataManager.instance.LoadEnemyData();
+    }
+
+    void DrawMap()
+    {
+        int map_x_size = map_data[0].Count;
+        int map_y_size = map_data.Count;
+
+        Vector3 top_left_position = new Vector3((map_x_size / 2 - 0.5f) * -1, 
+                                                map_y_size / 2 - 0.5f, 
+                                                0);
+
+        for (int y = 0; y < map_y_size; y++)
+        {
+            for (int x = 0; x < map_x_size; x++)
+            {
+                Instantiate(map_data[y][x].tile_sprite, top_left_position + new Vector3(x, -y, 0), Quaternion.identity, map_tile_container);
+            }
+        }
     }
 }

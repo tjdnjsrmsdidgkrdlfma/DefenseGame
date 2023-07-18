@@ -11,6 +11,10 @@ public class DataManager : MonoBehaviour
 
     public string current_map_name;
 
+    const string tile_data_file_name = "TileData.json";
+    const string map_data_file_name = "MapData.txt";
+    const string enemy_data_file_name = "EnemyData.txt";
+
     void Awake()
     {
         if (instance == null)
@@ -25,7 +29,7 @@ public class DataManager : MonoBehaviour
     {
         List<List<TileDataSet>> map_data = new List<List<TileDataSet>>();
 
-        string[] raw_map_data = BetterStreamingAssets.ReadAllLines(current_map_name + "MapData.txt");
+        string[] raw_map_data = BetterStreamingAssets.ReadAllLines(current_map_name + map_data_file_name);
 
         for (int map_data_y_index = 0; map_data_y_index < raw_map_data.Length; map_data_y_index++)
         {
@@ -59,7 +63,7 @@ public class DataManager : MonoBehaviour
     {
         List<List<EnemyDataSet>> enemy_data = new List<List<EnemyDataSet>>();
 
-        string[] raw_enemy_data = BetterStreamingAssets.ReadAllLines(current_map_name + "EnemyData.txt");
+        string[] raw_enemy_data = BetterStreamingAssets.ReadAllLines(current_map_name + enemy_data_file_name);
 
         enemy_data.Add(new List<EnemyDataSet>());
 
@@ -97,7 +101,7 @@ public class DataManager : MonoBehaviour
 
     public void SaveTileData(TileData tile_data)
     {
-        string path = Application.streamingAssetsPath + "\\TileData.json";
+        string path = Application.streamingAssetsPath + "\\" + tile_data_file_name;
         string json_data = JsonUtility.ToJson(tile_data, true);
 
         if (File.Exists(path) == false)
@@ -110,7 +114,7 @@ public class DataManager : MonoBehaviour
 
     public TileData LoadTileData()
     {
-        string path = "TileData.txt";
+        string path = tile_data_file_name;
         string json_data = BetterStreamingAssets.ReadAllText(path);
         TileData tile_data = JsonUtility.FromJson<TileData>(json_data);
 
