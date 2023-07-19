@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using static InGameSceneManager;
 
@@ -54,6 +55,7 @@ public class DataManager : MonoBehaviour
         List<List<TileDataSet>> map_data = new List<List<TileDataSet>>();
 
         string[] raw_map_data = BetterStreamingAssets.ReadAllLines(current_map_name + map_data_file_name);
+        StringBuilder temp_tile_id = new StringBuilder();
 
         for (int map_data_y_index = 0; map_data_y_index < raw_map_data.Length; map_data_y_index++)
         {
@@ -65,6 +67,7 @@ public class DataManager : MonoBehaviour
                 if (raw_map_data[map_data_y_index][map_data_x_index] == ',')
                 {
                     map_data_x_index++;
+                    SetTileID(map_data, map_data_y_index, temp_tile_id);
                     continue;
                 }
                 else if (raw_map_data[map_data_y_index][map_data_x_index] == ' ')
@@ -73,14 +76,22 @@ public class DataManager : MonoBehaviour
                     continue;
                 }
 
-                map_data[map_data_y_index].Add(new TileDataSet());
-                map_data[map_data_y_index][map_data[map_data_y_index].Count - 1].tile_id = int.Parse(raw_map_data[map_data_y_index][map_data_x_index].ToString());
+                temp_tile_id.Append(raw_map_data[map_data_y_index][map_data_x_index].ToString());
 
                 map_data_x_index++;
             }
+
+            SetTileID(map_data, map_data_y_index, temp_tile_id);
         }
 
         return map_data;
+    }
+
+    void SetTileID(List<List<TileDataSet>> map_data, int map_data_y_index, StringBuilder temp_tile_id)
+    {
+        map_data[map_data_y_index].Add(new TileDataSet());
+        map_data[map_data_y_index][map_data[map_data_y_index].Count - 1].tile_id = int.Parse(temp_tile_id.ToString());
+        temp_tile_id.Clear();
     }
 
     public void SaveTrapData(TrapData trap_data)
