@@ -26,6 +26,15 @@ public class InGameSceneCameraController : MonoBehaviour
 
     #endregion
 
+    #region 함정 배치 메뉴
+
+    [Header("함정 배치 메뉴")]
+    public bool is_showing_trap_place_menu;
+
+    [SerializeField] GameObject trap_place_menu;
+
+    #endregion
+
     #region 카메라 이동
 
     Vector2 move_current_position;
@@ -52,6 +61,8 @@ public class InGameSceneCameraController : MonoBehaviour
         current_camera_size = default_camera_size;
 
         wait_for_maximum_touch_time = new WaitForSeconds(maximum_touch_time);
+
+        is_showing_trap_place_menu = false;
     }
 
     void Update()
@@ -63,7 +74,7 @@ public class InGameSceneCameraController : MonoBehaviour
         }
         if (Input.GetMouseButton(0))
         {
-            if (is_it_touch == false || InGameSceneManager.instance.is_showing_trap_place_menu == false)
+            if (is_it_touch == false || is_showing_trap_place_menu == false)
             {
                 if (Input.touchCount == 1)
                 {
@@ -81,7 +92,7 @@ public class InGameSceneCameraController : MonoBehaviour
 
             if (is_it_touch == true)
             {
-                InGameSceneManager.instance.OnTouch();
+                OnTouch();
             }
         }
     }
@@ -146,5 +157,34 @@ public class InGameSceneCameraController : MonoBehaviour
         //손가락 사이의 거리가 커짐 -> 줌 인
         current_camera_size *= (different[0] / different[1]);
         cam.orthographicSize = current_camera_size;
+    }
+
+    void OnTouch()
+    {
+        ReverseTrapPlaceMenuState();
+    }
+
+    void ReverseTrapPlaceMenuState()
+    {
+        is_showing_trap_place_menu = !is_showing_trap_place_menu;
+
+        if (is_showing_trap_place_menu == true)
+        {
+            ShowTrapPlaceMenu();
+        }
+        else
+        {
+            HideTrapPlaceMenu();
+        }
+    }
+
+    void ShowTrapPlaceMenu()
+    {
+        trap_place_menu.SetActive(true);
+    }
+
+    void HideTrapPlaceMenu()
+    {
+        trap_place_menu.SetActive(false);
     }
 }
