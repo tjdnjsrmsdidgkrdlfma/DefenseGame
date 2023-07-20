@@ -44,6 +44,9 @@ public class InGameSceneManager : MonoBehaviour
     #region 맵
 
     [Header("맵")]
+    public int x_map_size;
+    public int y_map_size;
+
     [SerializeField] Transform map_tile_container;
 
     List<List<TileDataSet>> map_data;
@@ -120,7 +123,7 @@ public class InGameSceneManager : MonoBehaviour
 
         LoadMapData();
 
-        //SaveTrapData();
+        SaveTrapData();
         LoadTrapData();
 
         LoadEnemyData();
@@ -174,6 +177,8 @@ public class InGameSceneManager : MonoBehaviour
     {
         map_data = DataManager.instance.LoadMapData();
         MapDataLoadTileData();
+        x_map_size = map_data[0].Count;
+        y_map_size = map_data.Count;
     }
 
     void MapDataLoadTileData()

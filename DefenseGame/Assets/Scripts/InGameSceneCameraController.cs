@@ -168,14 +168,16 @@ public class InGameSceneCameraController : MonoBehaviour
     {
         is_showing_trap_place_menu = !is_showing_trap_place_menu;
 
-        if (is_showing_trap_place_menu == true)
+        Debug.Log(GetIndex(Camera.main.ScreenToWorldPoint(Input.mousePosition)).x + "_" + GetIndex(Camera.main.ScreenToWorldPoint(Input.mousePosition)).y);
+
+        /*if (is_showing_trap_place_menu == true)
         {
             ShowTrapPlaceMenu();
         }
         else
         {
             HideTrapPlaceMenu();
-        }
+        }*/
     }
 
     void ShowTrapPlaceMenu()
@@ -186,5 +188,37 @@ public class InGameSceneCameraController : MonoBehaviour
     void HideTrapPlaceMenu()
     {
         trap_place_menu.SetActive(false);
+    }
+
+    Vector2 GetIndex(Vector2 touch_position)
+    {
+        int x_half_map_size = InGameSceneManager.instance.x_map_size / 2;
+        int y_half_map_size = InGameSceneManager.instance.y_map_size / 2;
+
+        Vector2 result = new Vector2();
+
+        if (touch_position.x > 0)
+            result.x = (int)touch_position.x + x_half_map_size;
+        else
+            result.x = (int)touch_position.x + x_half_map_size - 1;
+
+        if (touch_position.y > 0)
+            result.y = y_half_map_size - (int)touch_position.y - 1;
+        else
+            result.y = y_half_map_size - (int)touch_position.y;
+
+        if (InGameSceneManager.instance.x_map_size % 2 != 0)
+        {
+            if (touch_position.x < 0)
+                result.x++;
+
+            if (touch_position.y > 0)
+                result.y++;
+
+            result.x--;
+            result.y--;
+        }
+        
+        return result;
     }
 }
