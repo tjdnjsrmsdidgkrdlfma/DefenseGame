@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InGameSceneCameraController : MonoBehaviour
 {
@@ -31,7 +32,12 @@ public class InGameSceneCameraController : MonoBehaviour
     [Header("함정 배치 메뉴")]
     public bool is_showing_trap_place_menu;
 
+    [SerializeField] float distance_from_center;
+
     [SerializeField] GameObject trap_place_menu;
+    [SerializeField] GameObject floor_trap_button_container;
+    [SerializeField] GameObject wall_trap_button_container;
+    [SerializeField] GameObject trap_button_prefab;
 
     #endregion
 
@@ -168,29 +174,96 @@ public class InGameSceneCameraController : MonoBehaviour
     {
         is_showing_trap_place_menu = !is_showing_trap_place_menu;
 
-        Debug.Log(GetIndex(Camera.main.ScreenToWorldPoint(Input.mousePosition)).x + "_" + GetIndex(Camera.main.ScreenToWorldPoint(Input.mousePosition)).y);
-
-        /*if (is_showing_trap_place_menu == true)
+        if (is_showing_trap_place_menu == true)
         {
             ShowTrapPlaceMenu();
         }
         else
         {
             HideTrapPlaceMenu();
-        }*/
+        }
     }
 
     void ShowTrapPlaceMenu()
     {
+        Vector2 touched_tile_index = GetIndex(cam.ScreenToWorldPoint(Input.mousePosition));
+
+        if (touched_tile_index.x < 0 || touched_tile_index.x >= InGameSceneManager.instance.map_data[0].Count
+         || touched_tile_index.y < 0 || touched_tile_index.y >= InGameSceneManager.instance.map_data.Count)
+            return;
+
+        InGameSceneManager.TileType tile_type = InGameSceneManager.instance.map_data[(int)touched_tile_index.y][(int)touched_tile_index.x].tile_type;
+        switch (tile_type)
+        {
+            case InGameSceneManager.TileType.MoveAbleFloor:
+            case InGameSceneManager.TileType.Wall:
+                SetTrapButtonContainer(tile_type);
+                break;
+            default:
+                return;
+        }
+
         trap_place_menu.SetActive(true);
+    }
+
+    void SetTrapButtonContainer(InGameSceneManager.TileType tile_type)
+    {
+        if (tile_type == InGameSceneManager.TileType.MoveAbleFloor)
+        {
+            floor_trap_button_container.SetActive(true);
+            if (floor_trap_button_container.transform.childCount != InGameSceneManager.instance.trap_place_on_floor_number)
+                SetTrapButtons(InGameSceneManager.TileType.MoveAbleFloor);
+
+            return;
+        }
+        else if (tile_type == InGameSceneManager.TileType.Wall)
+        {
+            wall_trap_button_container.SetActive(true);
+
+            if (wall_trap_button_container.transform.childCount != InGameSceneManager.instance.trap_place_on_wall_number)
+                SetTrapButtons(InGameSceneManager.TileType.Wall);
+
+            return;
+        }
+    }
+
+    void SetTrapButtons(InGameSceneManager.TileType tile_type)
+    {
+        int trap_number = 0;
+
+        GameObject trap_button_container = null;
+        List<InGameSceneManager.TrapDataSet> trap_datas = null;
+
+        if (tile_type == InGameSceneManager.TileType.MoveAbleFloor)
+        {
+            trap_number = InGameSceneManager.instance.trap_place_on_floor_number;
+
+            trap_button_container = floor_trap_button_container;
+            trap_datas = InGameSceneManager.instance.trap_place_on_floor_prefabs;
+        }
+        else if (tile_type == InGameSceneManager.TileType.Wall)
+        {
+            trap_number = InGameSceneManager.instance.trap_place_on_wall_number;
+
+            trap_button_container = wall_trap_button_container;
+            trap_datas = InGameSceneManager.instance.trap_place_on_wall_prefabs;
+        }
+            
+        for (int i = 0; i < trap_number; i++)
+        {
+            GameObject trap_button = Instantiate(trap_button_prefab, Vector3.zero, Quaternion.identity, trap_button_container.transform);
+            trap_button.GetComponent<Image>().sprite = trap_datas[i].trap_prefab.GetComponent<SpriteRenderer>().sprite;
+        }
     }
 
     void HideTrapPlaceMenu()
     {
         trap_place_menu.SetActive(false);
+        floor_trap_button_container.SetActive(false);
+        wall_trap_button_container.SetActive(false);
     }
 
-    Vector2 GetIndex(Vector2 touch_position)
+    Vector2 GetIndex(Vector2 touch_position) //화면 좌표 더해서 화면 움직인 상태에서도 정상 작동 하게
     {
         int x_half_map_size = InGameSceneManager.instance.x_map_size / 2;
         int y_half_map_size = InGameSceneManager.instance.y_map_size / 2;

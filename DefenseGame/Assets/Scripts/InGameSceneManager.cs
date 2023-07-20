@@ -30,8 +30,10 @@ public class InGameSceneManager : MonoBehaviour
     public class TileDataSet
     {
         public int tile_id;
+
         public TileType tile_type;
-        public GameObject tile_sprite;
+
+        public GameObject tile_prefab;
     }
 
     [Header("타일")]
@@ -47,9 +49,9 @@ public class InGameSceneManager : MonoBehaviour
     public int x_map_size;
     public int y_map_size;
 
-    [SerializeField] Transform map_tile_container;
+    public List<List<TileDataSet>> map_data;
 
-    List<List<TileDataSet>> map_data;
+    [SerializeField] Transform map_tile_container;
 
     #endregion
 
@@ -75,15 +77,22 @@ public class InGameSceneManager : MonoBehaviour
     [Serializable]
     public class TrapDataSet
     {
+        public int trap_id;
+
         public TrapType trap_type;
         public TrapPlaceType trap_place_type;
+
+        public GameObject trap_prefab;
     }
 
     [Header("함정")]
-    public int number_of_trap_place_on_floor;
-    public int number_of_trap_place_on_wall;
+    public int trap_place_on_floor_number;
+    public int trap_place_on_wall_number;
 
-    [SerializeField] TrapData trap_data;
+    public List<TrapDataSet> trap_place_on_floor_prefabs;
+    public List<TrapDataSet> trap_place_on_wall_prefabs;
+
+    [SerializeField] TrapData trap_data; //위의 두 변수와 중복되는 부분이 너무 많음 위의 두 변수는 id와 프리팹 정도만 가지고 있으면 될 듯
 
     #endregion
 
@@ -161,15 +170,22 @@ public class InGameSceneManager : MonoBehaviour
 
     void InitializeTrapVariables()
     {
-        number_of_trap_place_on_floor = 0;
-        number_of_trap_place_on_wall = 0;
+        trap_place_on_floor_number = 0;
+        trap_place_on_wall_number = 0;
 
         for (int i = 0; i < Enum.GetNames(typeof(TrapType)).Length; i++)
         {
             if (trap_data.trap_data[i].trap_place_type == TrapPlaceType.Floor)
-                number_of_trap_place_on_floor++;
+            {
+                trap_place_on_floor_prefabs.Add(trap_data.trap_data[i]);
+                trap_place_on_floor_number++;
+            }
             else if (trap_data.trap_data[i].trap_place_type == TrapPlaceType.Wall)
-                number_of_trap_place_on_wall++;
+            {
+                trap_place_on_wall_prefabs.Add(trap_data.trap_data[i]);
+                trap_place_on_wall_number++;
+            }
+                
         }
     }
 
@@ -210,7 +226,7 @@ public class InGameSceneManager : MonoBehaviour
         {
             for (int x = 0; x < map_x_size; x++)
             {
-                Instantiate(map_data[y][x].tile_sprite, top_left_position + new Vector3(x, -y, 0), Quaternion.identity, map_tile_container);
+                Instantiate(map_data[y][x].tile_prefab, top_left_position + new Vector3(x, -y, 0), Quaternion.identity, map_tile_container);
             }
         }
     }

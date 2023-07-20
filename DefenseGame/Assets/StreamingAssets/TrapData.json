@@ -1,8 +1,12 @@
 {
     "trap_data": [
         {
+            "trap_id": 0,
             "trap_type": 0,
-            "trap_place_type": 0
+            "trap_place_type": 0,
+            "trap_prefab": {
+                "instanceID": 24866
+            }
         }
     ]
 }

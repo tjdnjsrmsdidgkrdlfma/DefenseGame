@@ -253,6 +253,42 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &432969582
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 432969583}
+  m_Layer: 5
+  m_Name: WallTrapButtonContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &432969583
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 432969582}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 555038769}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &488000153
 GameObject:
   m_ObjectHideFlags: 0
@@ -405,7 +441,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maximum_touch_time: 0.1
   is_showing_trap_place_menu: 0
+  distance_from_center: 0
   trap_place_menu: {fileID: 555038768}
+  floor_trap_button_container: {fileID: 1109821699}
+  wall_trap_button_container: {fileID: 432969582}
+  trap_button_prefab: {fileID: 8613213334249540276, guid: 42de02fc89c9c0948a4fa2e675d7426b, type: 3}
 --- !u!1 &555038768
 GameObject:
   m_ObjectHideFlags: 0
@@ -435,6 +475,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2080492623}
+  - {fileID: 1109821700}
+  - {fileID: 432969583}
   m_Father: {fileID: 1651117448}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -474,6 +516,42 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1109821699
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1109821700}
+  m_Layer: 5
+  m_Name: FloorTrapButtonContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1109821700
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109821699}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 555038769}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1651117444
 GameObject:
   m_ObjectHideFlags: 0
@@ -551,7 +629,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -641,19 +719,23 @@ MonoBehaviour:
     tile_data:
     - tile_id: 0
       tile_type: 0
-      tile_sprite: {fileID: 803467442759338337, guid: 65f0ccc4c12a57441a63189b04282c3a, type: 3}
+      tile_prefab: {fileID: 8349587581299087749, guid: 8f0fa1181fe021f418fbbfc7419da97d, type: 3}
     - tile_id: 128
       tile_type: 128
-      tile_sprite: {fileID: 8349587581299087749, guid: 8f0fa1181fe021f418fbbfc7419da97d, type: 3}
+      tile_prefab: {fileID: 803467442759338337, guid: 65f0ccc4c12a57441a63189b04282c3a, type: 3}
   x_map_size: 0
   y_map_size: 0
   map_tile_container: {fileID: 817972674}
-  number_of_trap_place_on_floor: 0
-  number_of_trap_place_on_wall: 0
+  trap_place_on_floor_number: 0
+  trap_place_on_wall_number: 0
+  trap_place_on_floor_prefabs: []
+  trap_place_on_wall_prefabs: []
   trap_data:
     trap_data:
-    - trap_type: 0
+    - trap_id: 0
+      trap_type: 0
       trap_place_type: 0
+      trap_prefab: {fileID: 5533633622265827786, guid: 9688fbcdc20e0e1459a68858f4449cf1, type: 3}
 --- !u!4 &1900038980
 Transform:
   m_ObjectHideFlags: 0
