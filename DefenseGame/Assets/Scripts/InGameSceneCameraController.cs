@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Linq;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,8 +35,10 @@ public class InGameSceneCameraController : MonoBehaviour
     public bool is_showing_trap_place_menu;
 
     [SerializeField] float distance_from_center;
+    [SerializeField] float time_to_set_trap_place_menu;
 
     [SerializeField] GameObject trap_place_menu;
+    [SerializeField] GameObject trap_place_background;
     [SerializeField] GameObject floor_trap_button_container;
     [SerializeField] GameObject wall_trap_button_container;
     [SerializeField] GameObject trap_button_prefab;
@@ -203,27 +207,20 @@ public class InGameSceneCameraController : MonoBehaviour
                 return;
         }
 
-        trap_place_menu.SetActive(true);
+        StartCoroutine(FadeInOutTrapMenu(tile_type, true));
     }
 
     void SetTrapButtonContainer(InGameSceneManager.TileType tile_type)
     {
         if (tile_type == InGameSceneManager.TileType.MoveAbleFloor)
         {
-            floor_trap_button_container.SetActive(true);
             if (floor_trap_button_container.transform.childCount != InGameSceneManager.instance.trap_place_on_floor_number)
-                SetTrapButtons(InGameSceneManager.TileType.MoveAbleFloor);
-
-            return;
+                SetTrapButtons(tile_type);
         }
         else if (tile_type == InGameSceneManager.TileType.Wall)
         {
-            wall_trap_button_container.SetActive(true);
-
             if (wall_trap_button_container.transform.childCount != InGameSceneManager.instance.trap_place_on_wall_number)
-                SetTrapButtons(InGameSceneManager.TileType.Wall);
-
-            return;
+                SetTrapButtons(tile_type);
         }
     }
 
@@ -248,19 +245,100 @@ public class InGameSceneCameraController : MonoBehaviour
             trap_button_container = wall_trap_button_container;
             trap_datas = InGameSceneManager.instance.trap_place_on_wall_prefabs;
         }
-            
+
+        float angle_between_buttons = 360 * Mathf.Deg2Rad / trap_number;
         for (int i = 0; i < trap_number; i++)
         {
+            Vector3 button_position = new Vector3(Mathf.Cos(angle_between_buttons * i) * distance_from_center,
+                                                  Mathf.Sin(angle_between_buttons * i) * distance_from_center,
+                                                  0);
             GameObject trap_button = Instantiate(trap_button_prefab, Vector3.zero, Quaternion.identity, trap_button_container.transform);
+            trap_button.GetComponent<RectTransform>().anchoredPosition = button_position;
             trap_button.GetComponent<Image>().sprite = trap_datas[i].trap_prefab.GetComponent<SpriteRenderer>().sprite;
         }
     }
 
     void HideTrapPlaceMenu()
     {
-        trap_place_menu.SetActive(false);
-        floor_trap_button_container.SetActive(false);
-        wall_trap_button_container.SetActive(false);
+        Vector2 touched_tile_index = GetIndex(cam.ScreenToWorldPoint(Input.mousePosition));
+        InGameSceneManager.TileType tile_type = InGameSceneManager.instance.map_data[(int)touched_tile_index.y][(int)touched_tile_index.x].tile_type;
+
+        StartCoroutine(FadeInOutTrapMenu(tile_type, false));
+    }
+
+    IEnumerator FadeInOutTrapMenu(InGameSceneManager.TileType tile_type, bool fade_in)
+    {
+        Image background_image = trap_place_background.GetComponent<Image>();
+        GameObject trap_button_container = null;
+
+        trap_place_menu.SetActive(true);
+        trap_place_background.SetActive(true);
+        switch(tile_type)
+        {
+            case InGameSceneManager.TileType.MoveAbleFloor:
+                trap_button_container = floor_trap_button_container;
+                floor_trap_button_container.SetActive(true);
+                break;
+            case InGameSceneManager.TileType.Wall:
+                trap_button_container = wall_trap_button_container;
+                wall_trap_button_container.SetActive(true);
+                break;
+        }
+
+        List<RectTransform> trap_buttons = trap_button_container.GetComponentsInChildren<RectTransform>().ToList();
+
+        Vector3 button_scale_from;
+        Vector3 button_scale_to;
+        if (fade_in == true)
+        {
+            button_scale_from = new Vector3(0, 0, 0);
+            button_scale_to = new Vector3(1, 1, 1);
+        }
+        else
+        {
+            button_scale_from = new Vector3(1, 1, 1);
+            button_scale_to = new Vector3(0, 0, 0);
+        }
+
+        for (int i = 0; i < trap_buttons.Count; i++)
+        {
+            trap_buttons[i].localScale = button_scale_from;
+        }
+        
+        Color background_color_from;
+        Color background_color_to;
+        if (fade_in == true)
+        {
+            background_color_from = new Color(0, 0, 0, 0);
+            background_color_to = new Color(0, 0, 0, 0.5f);
+        }
+        else
+        {
+            background_color_from = new Color(0, 0, 0, 0.5f);
+            background_color_to = new Color(0, 0, 0, 0);
+        }
+
+        background_image.color = background_color_from;
+
+        float time = 0;
+        while (time < time_to_set_trap_place_menu)
+        {
+            time += Time.deltaTime;
+
+            if (time > time_to_set_trap_place_menu)
+                time = time_to_set_trap_place_menu;
+
+            Vector3 temp_scale = Vector3.Lerp(button_scale_from, button_scale_to, time / time_to_set_trap_place_menu);
+
+            for (int i = 0; i < trap_buttons.Count; i++)
+            {
+                trap_buttons[i].localScale = temp_scale;
+            }
+
+            background_image.color = Color.Lerp(background_color_from, background_color_to, time / time_to_set_trap_place_menu);
+
+            yield return null;
+        }
     }
 
     Vector2 GetIndex(Vector2 touch_position) //화면 좌표 더해서 화면 움직인 상태에서도 정상 작동 하게

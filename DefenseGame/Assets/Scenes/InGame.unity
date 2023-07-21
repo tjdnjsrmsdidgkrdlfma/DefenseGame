@@ -441,8 +441,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maximum_touch_time: 0.1
   is_showing_trap_place_menu: 0
-  distance_from_center: 0
+  distance_from_center: 160
+  time_to_set_trap_place_menu: 0.125
   trap_place_menu: {fileID: 555038768}
+  trap_place_background: {fileID: 2080492622}
   floor_trap_button_container: {fileID: 1109821699}
   wall_trap_button_container: {fileID: 432969582}
   trap_button_prefab: {fileID: 8613213334249540276, guid: 42de02fc89c9c0948a4fa2e675d7426b, type: 3}
@@ -734,7 +736,7 @@ MonoBehaviour:
     trap_data:
     - trap_id: 0
       trap_type: 0
-      trap_place_type: 0
+      trap_place_type: 1
       trap_prefab: {fileID: 5533633622265827786, guid: 9688fbcdc20e0e1459a68858f4449cf1, type: 3}
 --- !u!4 &1900038980
 Transform:
