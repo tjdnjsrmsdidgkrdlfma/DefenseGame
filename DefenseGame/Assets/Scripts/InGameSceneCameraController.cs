@@ -1,10 +1,6 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class InGameSceneCameraController : MonoBehaviour
 {
@@ -19,6 +15,8 @@ public class InGameSceneCameraController : MonoBehaviour
 
     #region 터치
 
+    public event Action OnTouch;
+
     [Tooltip("이 시간보다 더 길게 터치가 지속되면 카메라 이동이나 줌인아웃으로 처리")]
     [SerializeField] float maximum_touch_time;
 
@@ -26,22 +24,6 @@ public class InGameSceneCameraController : MonoBehaviour
 
     Coroutine check_touch_coroutine;
     WaitForSeconds wait_for_maximum_touch_time;
-
-    #endregion
-
-    #region 함정 배치 메뉴
-
-    [Header("함정 배치 메뉴")]
-    public bool is_showing_trap_place_menu;
-
-    [SerializeField] float distance_from_center;
-    [SerializeField] float time_to_set_trap_place_menu;
-
-    [SerializeField] GameObject trap_place_menu;
-    [SerializeField] GameObject trap_place_background;
-    [SerializeField] GameObject floor_trap_button_container;
-    [SerializeField] GameObject wall_trap_button_container;
-    [SerializeField] GameObject trap_button_prefab;
 
     #endregion
 
@@ -71,8 +53,6 @@ public class InGameSceneCameraController : MonoBehaviour
         current_camera_size = default_camera_size;
 
         wait_for_maximum_touch_time = new WaitForSeconds(maximum_touch_time);
-
-        is_showing_trap_place_menu = false;
     }
 
     void Update()
@@ -84,7 +64,7 @@ public class InGameSceneCameraController : MonoBehaviour
         }
         if (Input.GetMouseButton(0))
         {
-            if (is_it_touch == false || is_showing_trap_place_menu == false)
+            if (is_it_touch == false || InGameSceneManager.instance.showing_trap_menu == false)
             {
                 if (Input.touchCount == 1)
                 {
@@ -167,209 +147,5 @@ public class InGameSceneCameraController : MonoBehaviour
         //손가락 사이의 거리가 커짐 -> 줌 인
         current_camera_size *= (different[0] / different[1]);
         cam.orthographicSize = current_camera_size;
-    }
-
-    void OnTouch()
-    {
-        ReverseTrapPlaceMenuState();
-    }
-
-    void ReverseTrapPlaceMenuState()
-    {
-        is_showing_trap_place_menu = !is_showing_trap_place_menu;
-
-        if (is_showing_trap_place_menu == true)
-        {
-            ShowTrapPlaceMenu();
-        }
-        else
-        {
-            HideTrapPlaceMenu();
-        }
-    }
-
-    void ShowTrapPlaceMenu()
-    {
-        Vector2 touched_tile_index = GetIndex(cam.ScreenToWorldPoint(Input.mousePosition));
-
-        if (touched_tile_index.x < 0 || touched_tile_index.x >= InGameSceneManager.instance.map_data[0].Count
-         || touched_tile_index.y < 0 || touched_tile_index.y >= InGameSceneManager.instance.map_data.Count)
-            return;
-
-        InGameSceneManager.TileType tile_type = InGameSceneManager.instance.map_data[(int)touched_tile_index.y][(int)touched_tile_index.x].tile_type;
-        switch (tile_type)
-        {
-            case InGameSceneManager.TileType.MoveAbleFloor:
-            case InGameSceneManager.TileType.Wall:
-                SetTrapButtonContainer(tile_type);
-                break;
-            default:
-                return;
-        }
-
-        StartCoroutine(FadeInOutTrapMenu(tile_type, true));
-    }
-
-    void SetTrapButtonContainer(InGameSceneManager.TileType tile_type)
-    {
-        if (tile_type == InGameSceneManager.TileType.MoveAbleFloor)
-        {
-            if (floor_trap_button_container.transform.childCount != InGameSceneManager.instance.trap_place_on_floor_number)
-                SetTrapButtons(tile_type);
-        }
-        else if (tile_type == InGameSceneManager.TileType.Wall)
-        {
-            if (wall_trap_button_container.transform.childCount != InGameSceneManager.instance.trap_place_on_wall_number)
-                SetTrapButtons(tile_type);
-        }
-    }
-
-    void SetTrapButtons(InGameSceneManager.TileType tile_type)
-    {
-        int trap_number = 0;
-
-        GameObject trap_button_container = null;
-        List<InGameSceneManager.TrapDataSet> trap_datas = null;
-
-        if (tile_type == InGameSceneManager.TileType.MoveAbleFloor)
-        {
-            trap_number = InGameSceneManager.instance.trap_place_on_floor_number;
-
-            trap_button_container = floor_trap_button_container;
-            trap_datas = InGameSceneManager.instance.trap_place_on_floor_prefabs;
-        }
-        else if (tile_type == InGameSceneManager.TileType.Wall)
-        {
-            trap_number = InGameSceneManager.instance.trap_place_on_wall_number;
-
-            trap_button_container = wall_trap_button_container;
-            trap_datas = InGameSceneManager.instance.trap_place_on_wall_prefabs;
-        }
-
-        float angle_between_buttons = 360 * Mathf.Deg2Rad / trap_number;
-        for (int i = 0; i < trap_number; i++)
-        {
-            Vector3 button_position = new Vector3(Mathf.Cos(angle_between_buttons * i) * distance_from_center,
-                                                  Mathf.Sin(angle_between_buttons * i) * distance_from_center,
-                                                  0);
-            GameObject trap_button = Instantiate(trap_button_prefab, Vector3.zero, Quaternion.identity, trap_button_container.transform);
-            trap_button.GetComponent<RectTransform>().anchoredPosition = button_position;
-            trap_button.GetComponent<Image>().sprite = trap_datas[i].trap_prefab.GetComponent<SpriteRenderer>().sprite;
-        }
-    }
-
-    void HideTrapPlaceMenu()
-    {
-        Vector2 touched_tile_index = GetIndex(cam.ScreenToWorldPoint(Input.mousePosition));
-        InGameSceneManager.TileType tile_type = InGameSceneManager.instance.map_data[(int)touched_tile_index.y][(int)touched_tile_index.x].tile_type;
-
-        StartCoroutine(FadeInOutTrapMenu(tile_type, false));
-    }
-
-    IEnumerator FadeInOutTrapMenu(InGameSceneManager.TileType tile_type, bool fade_in)
-    {
-        Image background_image = trap_place_background.GetComponent<Image>();
-        GameObject trap_button_container = null;
-
-        trap_place_menu.SetActive(true);
-        trap_place_background.SetActive(true);
-        switch(tile_type)
-        {
-            case InGameSceneManager.TileType.MoveAbleFloor:
-                trap_button_container = floor_trap_button_container;
-                floor_trap_button_container.SetActive(true);
-                break;
-            case InGameSceneManager.TileType.Wall:
-                trap_button_container = wall_trap_button_container;
-                wall_trap_button_container.SetActive(true);
-                break;
-        }
-
-        List<RectTransform> trap_buttons = trap_button_container.GetComponentsInChildren<RectTransform>().ToList();
-
-        Vector3 button_scale_from;
-        Vector3 button_scale_to;
-        if (fade_in == true)
-        {
-            button_scale_from = new Vector3(0, 0, 0);
-            button_scale_to = new Vector3(1, 1, 1);
-        }
-        else
-        {
-            button_scale_from = new Vector3(1, 1, 1);
-            button_scale_to = new Vector3(0, 0, 0);
-        }
-
-        for (int i = 0; i < trap_buttons.Count; i++)
-        {
-            trap_buttons[i].localScale = button_scale_from;
-        }
-        
-        Color background_color_from;
-        Color background_color_to;
-        if (fade_in == true)
-        {
-            background_color_from = new Color(0, 0, 0, 0);
-            background_color_to = new Color(0, 0, 0, 0.5f);
-        }
-        else
-        {
-            background_color_from = new Color(0, 0, 0, 0.5f);
-            background_color_to = new Color(0, 0, 0, 0);
-        }
-
-        background_image.color = background_color_from;
-
-        float time = 0;
-        while (time < time_to_set_trap_place_menu)
-        {
-            time += Time.deltaTime;
-
-            if (time > time_to_set_trap_place_menu)
-                time = time_to_set_trap_place_menu;
-
-            Vector3 temp_scale = Vector3.Lerp(button_scale_from, button_scale_to, time / time_to_set_trap_place_menu);
-
-            for (int i = 0; i < trap_buttons.Count; i++)
-            {
-                trap_buttons[i].localScale = temp_scale;
-            }
-
-            background_image.color = Color.Lerp(background_color_from, background_color_to, time / time_to_set_trap_place_menu);
-
-            yield return null;
-        }
-    }
-
-    Vector2 GetIndex(Vector2 touch_position) //화면 좌표 더해서 화면 움직인 상태에서도 정상 작동 하게
-    {
-        int x_half_map_size = InGameSceneManager.instance.x_map_size / 2;
-        int y_half_map_size = InGameSceneManager.instance.y_map_size / 2;
-
-        Vector2 result = new Vector2();
-
-        if (touch_position.x > 0)
-            result.x = (int)touch_position.x + x_half_map_size;
-        else
-            result.x = (int)touch_position.x + x_half_map_size - 1;
-
-        if (touch_position.y > 0)
-            result.y = y_half_map_size - (int)touch_position.y - 1;
-        else
-            result.y = y_half_map_size - (int)touch_position.y;
-
-        if (InGameSceneManager.instance.x_map_size % 2 != 0)
-        {
-            if (touch_position.x < 0)
-                result.x++;
-
-            if (touch_position.y > 0)
-                result.y++;
-
-            result.x--;
-            result.y--;
-        }
-        
-        return result;
     }
 }

@@ -2,10 +2,34 @@
     "trap_data": [
         {
             "trap_id": 0,
-            "trap_type": 0,
-            "trap_place_type": 1,
+            "trap_name": "0",
+            "trap_tile_type": 0,
             "trap_prefab": {
-                "instanceID": 24866
+                "instanceID": 25312
+            }
+        },
+        {
+            "trap_id": 1,
+            "trap_name": "1",
+            "trap_tile_type": 0,
+            "trap_prefab": {
+                "instanceID": 25314
+            }
+        },
+        {
+            "trap_id": 2,
+            "trap_name": "2",
+            "trap_tile_type": 0,
+            "trap_prefab": {
+                "instanceID": 25316
+            }
+        },
+        {
+            "trap_id": 3,
+            "trap_name": "3",
+            "trap_tile_type": 2,
+            "trap_prefab": {
+                "instanceID": 25318
             }
         }
     ]

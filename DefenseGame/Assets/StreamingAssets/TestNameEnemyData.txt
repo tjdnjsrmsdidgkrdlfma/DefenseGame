@@ -1,8 +1,0 @@
-1
-Pebble,4
-Delay,10
-IDKMONSTER,8
-2
-Pebble,8
-Delay,20
-IDKMONSTER,16

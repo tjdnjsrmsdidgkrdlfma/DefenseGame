@@ -60,14 +60,25 @@
   <ItemGroup>
     <Compile Include="Assets\Packages\BetterStreamingAssets\BSA_ZipArchive.cs" />
     <Compile Include="Assets\Scripts\InGameSceneCameraController.cs" />
+    <Compile Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\Scripts\Prop Variants\DUN_Table.cs" />
     <Compile Include="Assets\Packages\BetterStreamingAssets\BSA_SubReadOnlyStream.cs" />
     <Compile Include="Assets\Packages\BetterStreamingAssets\BSA_PathUtil.cs" />
+    <Compile Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\Scripts\DUN_AnimatedCharacterSelection.cs" />
     <Compile Include="Assets\Packages\BetterStreamingAssets\BSA_TestSceneGUI.cs" />
     <Compile Include="Assets\Scripts\InGameSceneManager.cs" />
     <Compile Include="Assets\Packages\BetterStreamingAssets\BSA_BetterStreamingAssets.cs" />
+    <Compile Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\Scripts\Prop Variants\DUN_Chair.cs" />
+    <Compile Include="Assets\Packages\KrishnaPalacio\MinifantasyCommon\Scripts\CameraController.cs" />
+    <Compile Include="Assets\Packages\KrishnaPalacio\MinifantasyCommon\Scripts\SetAnimatorParameter.cs" />
+    <Compile Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\Scripts\DUN_StaggerAnimation.cs" />
+    <Compile Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\Scripts\Prop Variants\DUN_Statue.cs" />
+    <Compile Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\Scripts\Prop Variants\DUN_Banner.cs" />
+    <Compile Include="Assets\Packages\KrishnaPalacio\MinifantasyCommon\Scripts\AnimatedObjectsGroup.cs" />
+    <Compile Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\Scripts\Prop Variants\DUN_LootSack.cs" />
     <Compile Include="Assets\Scripts\DataManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\DUN Documentation.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
@@ -75,7 +86,6 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\Packages\BetterStreamingAssets\README.txt" />
-    <None Include="Assets\StreamingAssets\TestNameMapData.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
@@ -86,7 +96,6 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
-    <None Include="Assets\StreamingAssets\TestNameEnemyData.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
