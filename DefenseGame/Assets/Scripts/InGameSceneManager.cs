@@ -11,7 +11,7 @@ public class InGameSceneManager : MonoBehaviour
 {
     public static InGameSceneManager instance;
     Camera cam;
-    InGameSceneCameraController camera_controller;
+    CameraManager camera_controller;
 
     #region 맵
 
@@ -91,56 +91,6 @@ public class InGameSceneManager : MonoBehaviour
 
     #endregion
 
-    #region 적
-
-    [Serializable]
-    public class EnemyData
-    {
-        public List<EnemyDataSet> enemy_data;
-    }
-
-    [Serializable]
-    public class EnemyDataSet
-    {
-        public int enemy_id;
-        public string enemy_name;
-
-        public GameObject enemy_prefab;
-    }
-
-    [Header("적")]
-    [SerializeField] EnemyData enemy_data;
-    Dictionary<int, EnemyDataSet> enemy_id_2_enemy_data = new Dictionary<int, EnemyDataSet>();
-
-    #endregion
-
-    #region 웨이브
-
-    [Serializable]
-    public class WaveData
-    {
-        public WaveData(string[] splited_line_data)
-        {
-            this.index = int.Parse(splited_line_data[0]);
-            this.wave = int.Parse(splited_line_data[1]);
-            this.enemy_id = int.Parse(splited_line_data[2]);
-            this.enemy_count = int.Parse(splited_line_data[3]);
-            this.time_between_enemy = float.Parse(splited_line_data[4]);
-        }
-
-        public int index;
-        public int wave;
-        public int enemy_id;
-        public int enemy_count;
-        public float time_between_enemy;
-    }
-
-    [SerializeField] float time_between_wave;
-
-    WaveData[] wave_data;
-
-    #endregion
-
     void Awake()
     {
         instance = this;
@@ -149,12 +99,11 @@ public class InGameSceneManager : MonoBehaviour
     void Start()
     {
         cam = FindObjectOfType<Camera>();
-        camera_controller = FindObjectOfType<InGameSceneCameraController>();
+        camera_controller = FindObjectOfType<CameraManager>();
         camera_controller.OnTouch += ReverseTrapPlaceMenuState;
 
         ControlData();
         GetTileData();
-        StartCoroutine(SpawnEnemyLoop());
     }
 
     void ControlData()
@@ -164,14 +113,6 @@ public class InGameSceneManager : MonoBehaviour
 #endif
         trap_data = DataManager.instance.LoadTrapData();
         InitializeTrapVariables();
-
-#if UNITY_EDITOR
-        DataManager.instance.SaveEnemyData(enemy_data);
-#endif
-        enemy_data = DataManager.instance.LoadEnemyData();
-        InitializeEnemyVariables();
-
-        wave_data = DataManager.instance.LoadWaveData();
     }
 
     void InitializeTrapVariables()
@@ -186,14 +127,6 @@ public class InGameSceneManager : MonoBehaviour
             {
                 trap_indexes_place_on_wall.Add(i);
             }
-        }
-    }
-
-    void InitializeEnemyVariables()
-    {
-        for (int i = 0; i < enemy_data.enemy_data.Count; i++)
-        {
-            enemy_id_2_enemy_data.Add(enemy_data.enemy_data[i].enemy_id, enemy_data.enemy_data[i]);
         }
     }
 
@@ -235,44 +168,6 @@ public class InGameSceneManager : MonoBehaviour
                 }
             }
         }
-    }
-
-    IEnumerator SpawnEnemyLoop()
-    {
-        int current_wave;
-        int last_wave = wave_data[wave_data.Length - 1].wave;
-        int wave_data_index = 0;
-
-        WaitForSeconds time_between_wave = new WaitForSeconds(this.time_between_wave);
-
-        for (current_wave = 1; current_wave <= last_wave; current_wave++)
-        {
-            int target_wave_data_index = wave_data_index;
-            while (target_wave_data_index < wave_data.Length && wave_data[target_wave_data_index].wave == current_wave)
-                target_wave_data_index++;
-
-            for (; wave_data_index < target_wave_data_index; wave_data_index++)
-            {
-                WaitForSeconds time_between_enemy = new WaitForSeconds(wave_data[wave_data_index].time_between_enemy);
-
-                for (int i = 0; i < wave_data[wave_data_index].enemy_count; i++)
-                {
-                    CreateEnemy(wave_data[wave_data_index].enemy_id);
-                    Instantiate(enemy_id_2_enemy_data[wave_data[wave_data_index].enemy_id].enemy_prefab);
-                    
-                    yield return time_between_enemy;
-                }
-            }
-
-            yield return time_between_wave;
-        }
-    }
-
-    void CreateEnemy(int enemy_id)
-    {
-
-        //인자를 파싱해서 오브젝트를 찾음
-        //오브젝트 풀링 적용
     }
 
     void Update()

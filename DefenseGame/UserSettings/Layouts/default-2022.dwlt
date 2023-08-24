@@ -199,7 +199,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 150}
   m_MaxSize: {x: 8096, y: 24288}
   vertical: 1
-  controlID: 49
+  controlID: 26
 --- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -375,9 +375,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: a8690000
+      m_SelectedIDs: 38690000
       m_LastClickedID: 0
-      m_ExpandedIDs: 0efbffff
+      m_ExpandedIDs: 34d8ffff30daffff0efbffff02630000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -510,7 +510,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 7e610000
     m_LastClickedID: 24958
-    m_ExpandedIDs: 00000000dc630000de630000e0630000e2630000e4630000e6630000e8630000ea630000ec630000ee630000
+    m_ExpandedIDs: 00000000da630000dc630000de630000e0630000e2630000e4630000e6630000e8630000ea630000ec630000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -538,18 +538,18 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: ffffffff00000000dc630000de630000e0630000e2630000e4630000e6630000e8630000ea630000ec630000ee630000
+    m_ExpandedIDs: ffffffff00000000da630000dc630000de630000e0630000e2630000e4630000e6630000e8630000ea630000ec630000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: EnemyManager
-      m_OriginalName: EnemyManager
+      m_Name: CameraManager
+      m_OriginalName: CameraManager
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 27048
+      m_UserData: 20232
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
       m_OriginalEventType: 0
@@ -1061,9 +1061,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 0, y: 0, z: 0}
+    m_Target: {x: 0.5, y: 0.5, z: -0.1}
     speed: 2
-    m_Value: {x: 0, y: 0, z: 0}
+    m_Value: {x: 0.5, y: 0.5, z: -0.1}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1113,9 +1113,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 10
+    m_Target: 2.123676
     speed: 2
-    m_Value: 10
+    m_Value: 2.123676
   m_Ortho:
     m_Target: 1
     speed: 2

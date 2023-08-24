@@ -59,7 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Packages\BetterStreamingAssets\BSA_ZipArchive.cs" />
-    <Compile Include="Assets\Scripts\InGameSceneCameraController.cs" />
     <Compile Include="Assets\Packages\Enemy Galore 1 - Pixel Art\Script\EnemyTest.cs" />
     <Compile Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\Scripts\Prop Variants\DUN_Table.cs" />
     <Compile Include="Assets\Packages\BetterStreamingAssets\BSA_SubReadOnlyStream.cs" />
@@ -72,6 +71,7 @@
     <Compile Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\Scripts\Prop Variants\DUN_Chair.cs" />
     <Compile Include="Assets\Packages\KrishnaPalacio\MinifantasyCommon\Scripts\CameraController.cs" />
     <Compile Include="Assets\Packages\KrishnaPalacio\MinifantasyCommon\Scripts\SetAnimatorParameter.cs" />
+    <Compile Include="Assets\Scripts\CameraManager.cs" />
     <Compile Include="Assets\Scripts\EnemyManager.cs" />
     <Compile Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\Scripts\DUN_StaggerAnimation.cs" />
     <Compile Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\Scripts\Prop Variants\DUN_Statue.cs" />

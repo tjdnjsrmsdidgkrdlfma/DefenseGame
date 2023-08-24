@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class InGameSceneCameraController : MonoBehaviour
+public class CameraManager : MonoBehaviour
 {
     #region 카메라
 

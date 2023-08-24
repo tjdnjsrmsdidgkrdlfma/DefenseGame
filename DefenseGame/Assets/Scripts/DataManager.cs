@@ -49,7 +49,7 @@ public class DataManager : MonoBehaviour
         return tile_data;
     }
 
-    public void SaveEnemyData(InGameSceneManager.EnemyData enemy_data)
+    public void SaveEnemyData(EnemyManager.EnemyData enemy_data)
     {
         string path = Application.streamingAssetsPath + "\\" + enemy_data_file_name;
         string json_data = JsonUtility.ToJson(enemy_data, true);
@@ -62,20 +62,20 @@ public class DataManager : MonoBehaviour
         File.WriteAllText(path, json_data);
     }
 
-    public InGameSceneManager.EnemyData LoadEnemyData()
+    public EnemyManager.EnemyData LoadEnemyData()
     {
         string path = enemy_data_file_name;
         string json_data = BetterStreamingAssets.ReadAllText(path);
-        InGameSceneManager.EnemyData enemy_data = JsonUtility.FromJson<InGameSceneManager.EnemyData>(json_data);
+        EnemyManager.EnemyData enemy_data = JsonUtility.FromJson<EnemyManager.EnemyData>(json_data);
 
         return enemy_data;
     }
 
-    public InGameSceneManager.WaveData[] LoadWaveData()
+    public EnemyManager.WaveData[] LoadWaveData()
     {
         string path = current_map_name + wave_data_file_name;
 
-        List<InGameSceneManager.WaveData> wave_data = new List<InGameSceneManager.WaveData>();
+        List<EnemyManager.WaveData> wave_data = new List<EnemyManager.WaveData>();
 
         string[] raw_data = BetterStreamingAssets.ReadAllLines(path);
 
@@ -83,7 +83,7 @@ public class DataManager : MonoBehaviour
         {
             raw_data[i] = RemoveSpace(raw_data[i]);
             string[] splited_line_data = raw_data[i].Split(',');
-            wave_data.Add(new InGameSceneManager.WaveData(splited_line_data));
+            wave_data.Add(new EnemyManager.WaveData(splited_line_data));
         }
 
         return wave_data.ToArray();

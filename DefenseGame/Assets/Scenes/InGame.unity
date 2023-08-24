@@ -728,8 +728,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 932303650}
+  - component: {fileID: 932303651}
   m_Layer: 0
-  m_Name: EnemyContainer
+  m_Name: EnemyManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -750,6 +751,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &932303651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932303649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448fd5da95ea5b64a828f3ca85a00c5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemy_data:
+    enemy_data:
+    - enemy_id: 0
+      enemy_name: Pebble
+      enemy_prefab: {fileID: 1272712037290502905, guid: 4649443718977ac4abab9c88aa00c158, type: 3}
+  time_between_wave: 8
 --- !u!1 &1109821699
 GameObject:
   m_ObjectHideFlags: 0
@@ -2626,12 +2645,6 @@ MonoBehaviour:
   trap_menu_background: {fileID: 2080492622}
   move_able_floor_trap_button_container: {fileID: 1109821700}
   wall_trap_button_container: {fileID: 432969583}
-  enemy_data:
-    enemy_data:
-    - enemy_id: 0
-      enemy_name: Pebble
-      enemy_prefab: {fileID: 1272712037290502905, guid: 4649443718977ac4abab9c88aa00c158, type: 3}
-  time_between_wave: 0
 --- !u!4 &1900038980
 Transform:
   m_ObjectHideFlags: 0
