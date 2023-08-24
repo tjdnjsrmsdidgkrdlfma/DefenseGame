@@ -1,0 +1,6 @@
+﻿Index,Wave,EnemyID,EnemyCount,TimeBetweenEnemy
+0,1,0,5,1
+1,1,0,10,0.5
+2,1,0,5,1
+3,2,0,20,0.5
+4,2,0,20,2

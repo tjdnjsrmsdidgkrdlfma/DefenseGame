@@ -1,0 +1,11 @@
+{
+    "enemy_data": [
+        {
+            "enemy_id": 0,
+            "enemy_name": "Pebble",
+            "enemy_prefab": {
+                "instanceID": 25452
+            }
+        }
+    ]
+}

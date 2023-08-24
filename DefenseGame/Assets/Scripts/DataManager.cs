@@ -1,5 +1,8 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public class DataManager : MonoBehaviour
@@ -9,14 +12,17 @@ public class DataManager : MonoBehaviour
     public string current_map_name;
 
     const string trap_data_file_name = "TrapData.json";
-    const string enemy_data_file_name = "EnemyData.txt";
+    const string enemy_data_file_name = "EnemyData.json";
+    const string wave_data_file_name = "WaveData.csv";
 
     void Awake()
     {
         if (instance == null)
             instance = this;
         else
-            Destroy(this.gameObject);
+            Destroy(gameObject);
+
+        DontDestroyOnLoad(gameObject);
 
         BetterStreamingAssets.Initialize();
     }
@@ -43,43 +49,48 @@ public class DataManager : MonoBehaviour
         return tile_data;
     }
 
-    public List<List<InGameSceneManager.EnemyDataSet>> LoadEnemyData()
+    public void SaveEnemyData(InGameSceneManager.EnemyData enemy_data)
     {
-        List<List<InGameSceneManager.EnemyDataSet>> enemy_data = new List<List<InGameSceneManager.EnemyDataSet>>();
+        string path = Application.streamingAssetsPath + "\\" + enemy_data_file_name;
+        string json_data = JsonUtility.ToJson(enemy_data, true);
 
-        string[] raw_enemy_data = BetterStreamingAssets.ReadAllLines(current_map_name + enemy_data_file_name);
-
-        enemy_data.Add(new List<InGameSceneManager.EnemyDataSet>());
-
-        int wave_index = 0;
-        int enemy_data_y_index = 0;
-        while (enemy_data_y_index < raw_enemy_data.Length)
+        if (File.Exists(path) == false)
         {
-            enemy_data.Add(new List<InGameSceneManager.EnemyDataSet>());
-
-            wave_index++;
-            enemy_data_y_index++;
-
-            int enemy_data_x_index = 0;
-            while (true)
-            {
-                if (enemy_data_y_index >= raw_enemy_data.Length)
-                    break;
-
-                string[] temp = raw_enemy_data[enemy_data_y_index].Split(',');
-
-                if (temp.Length == 1)
-                    break;
-
-                enemy_data[wave_index].Add(new InGameSceneManager.EnemyDataSet());
-                enemy_data[wave_index][enemy_data_x_index].name = temp[0];
-                enemy_data[wave_index][enemy_data_x_index].number = int.Parse(temp[1]);
-
-                enemy_data_x_index++;
-                enemy_data_y_index++;
-            }
+            File.Create(path).Close();
         }
 
+        File.WriteAllText(path, json_data);
+    }
+
+    public InGameSceneManager.EnemyData LoadEnemyData()
+    {
+        string path = enemy_data_file_name;
+        string json_data = BetterStreamingAssets.ReadAllText(path);
+        InGameSceneManager.EnemyData enemy_data = JsonUtility.FromJson<InGameSceneManager.EnemyData>(json_data);
+
         return enemy_data;
+    }
+
+    public InGameSceneManager.WaveData[] LoadWaveData()
+    {
+        string path = current_map_name + wave_data_file_name;
+
+        List<InGameSceneManager.WaveData> wave_data = new List<InGameSceneManager.WaveData>();
+
+        string[] raw_data = BetterStreamingAssets.ReadAllLines(path);
+
+        for (int i = 1; i < raw_data.Length; i++)
+        {
+            raw_data[i] = RemoveSpace(raw_data[i]);
+            string[] splited_line_data = raw_data[i].Split(',');
+            wave_data.Add(new InGameSceneManager.WaveData(splited_line_data));
+        }
+
+        return wave_data.ToArray();
+    }
+
+    string RemoveSpace(string old_string)
+    {
+        return string.Concat(old_string.Where(c => !char.IsWhiteSpace(c)));
     }
 }
