@@ -5,7 +5,7 @@
             "trap_name": "0",
             "trap_tile_type": 0,
             "trap_prefab": {
-                "instanceID": 25440
+                "instanceID": 25460
             }
         },
         {
@@ -13,7 +13,7 @@
             "trap_name": "1",
             "trap_tile_type": 0,
             "trap_prefab": {
-                "instanceID": 25442
+                "instanceID": 25462
             }
         },
         {
@@ -21,7 +21,7 @@
             "trap_name": "2",
             "trap_tile_type": 0,
             "trap_prefab": {
-                "instanceID": 25444
+                "instanceID": 25464
             }
         },
         {
@@ -29,7 +29,7 @@
             "trap_name": "3",
             "trap_tile_type": 2,
             "trap_prefab": {
-                "instanceID": 25446
+                "instanceID": 25466
             }
         }
     ]

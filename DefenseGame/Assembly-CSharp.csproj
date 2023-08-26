@@ -63,6 +63,7 @@
     <Compile Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\Scripts\Prop Variants\DUN_Table.cs" />
     <Compile Include="Assets\Packages\BetterStreamingAssets\BSA_SubReadOnlyStream.cs" />
     <Compile Include="Assets\Packages\BetterStreamingAssets\BSA_PathUtil.cs" />
+    <Compile Include="Assets\Scripts\Enemy.cs" />
     <Compile Include="Assets\Packages\KrishnaPalacio\MINIFANTASY - Dungeon\Scripts\DUN_AnimatedCharacterSelection.cs" />
     <Compile Include="Assets\Packages\BetterStreamingAssets\BSA_TestSceneGUI.cs" />
     <Compile Include="Assets\Packages\Enemy Galore 1 - Pixel Art\Script\EnemySelector.cs" />

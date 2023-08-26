@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEditor;
+using UnityEditor.Experimental.GraphView;
+using UnityEditor.TerrainTools;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
@@ -24,11 +27,20 @@ public class InGameSceneManager : MonoBehaviour
         EndPoint
     }
 
+    public enum MoveAbleTileType
+    {
+        MoveAbleFloor = TileType.MoveAbleFloor,
+        EndPoint = TileType.EndPoint
+    }
+
     [Header("맵")]
     [SerializeField] Transform grid;
 
+    int map_tile_data_x_length;
     int map_tile_data_half_x_length; //맵 타일 개수가 세로일 때는 안 될수도
+    int map_tile_data_y_length;
     int map_tile_data_half_y_length;
+
     TileType[,] map_tile_data;
 
     #endregion
@@ -91,6 +103,43 @@ public class InGameSceneManager : MonoBehaviour
 
     #endregion
 
+    #region 길 찾기
+
+    [Serializable]
+    public class Node
+    {
+        public Node(int x, int y)
+        {
+            index = new Vector2Int(x, y);
+        }
+
+        public int g;
+        public int h;
+        public int f;
+
+        public Vector2Int index;
+
+        public Node parent_node;
+    }
+
+    readonly Vector2Int[] move_directions = new Vector2Int[4]
+    {
+        new Vector2Int(0, 1),
+        new Vector2Int(1, 0),
+        new Vector2Int(0, -1),
+        new Vector2Int(-1, 0)
+    };
+
+    Node start_node;
+    Node end_node;
+    Node[,] node_data;
+    List<Node> opened_list = new List<Node>();
+    List<Node> closed_list = new List<Node>();
+
+    #endregion
+
+    List<Vector2> temp;
+
     void Awake()
     {
         instance = this;
@@ -104,6 +153,18 @@ public class InGameSceneManager : MonoBehaviour
 
         ControlData();
         GetTileData();
+
+        temp = PathFinding(Vector3.zero);
+    }
+
+    void OnDrawGizmos()
+    {
+        for (int i = 0; i < temp.Count; i++)
+        {
+            Gizmos.color = Color.black;
+            Gizmos.DrawCube(temp[i], Vector3.one / 2);
+            Handles.Label(temp[i], i.ToString());
+        }
     }
 
     void ControlData()
@@ -146,8 +207,10 @@ public class InGameSceneManager : MonoBehaviour
         }
 
         map_tile_data = new TileType[bounds.size.y, bounds.size.x];
-        map_tile_data_half_x_length = map_tile_data.GetLength(1) / 2;
-        map_tile_data_half_y_length = map_tile_data.GetLength(0) / 2;
+        map_tile_data_x_length = map_tile_data.GetLength(1);
+        map_tile_data_half_x_length = map_tile_data_x_length / 2;
+        map_tile_data_y_length = map_tile_data.GetLength(0);
+        map_tile_data_half_y_length = map_tile_data_y_length / 2;
         map_trap_data = new TrapTileType[bounds.size.y, bounds.size.x];
 
         for (int i = 0; i < tilemaps.Count; i++)
@@ -164,6 +227,11 @@ public class InGameSceneManager : MonoBehaviour
                     if (tile_base != null)
                     {
                         map_tile_data[y, x] = tilemap_tile_type;
+
+                        if (tilemap_tile_type == TileType.StartPoint)
+                            start_node = new Node(x, y);
+                        else if (tilemap_tile_type == TileType.EndPoint)
+                            end_node = new Node(x, y);
                     }
                 }
             }
@@ -359,5 +427,164 @@ public class InGameSceneManager : MonoBehaviour
         TileType tile_type = GetTileTypeFromTouchPosition();
 
         StartCoroutine(FadeInOutTrapMenu(tile_type, false));
+    }
+
+    public List<Vector2> PathFinding(Vector3 current_position)
+    {
+        node_data = new Node[map_tile_data_y_length, map_tile_data_x_length];
+        for (int y = 0; y < node_data.GetLength(0); y++)
+        {
+            for (int x = 0; x < node_data.GetLength(1); x++)
+            {
+                node_data[y, x] = new Node(x, y);
+            }
+        }
+
+        start_node = node_data[start_node.index.y, start_node.index.x];
+        end_node = node_data[end_node.index.y, end_node.index.x];
+
+        opened_list.Clear();
+        closed_list.Clear();
+
+        Vector2Int index;
+        Node node;
+
+        opened_list.Add(node_data[start_node.index.y, start_node.index.x]);
+
+        for (int i = 0; i < move_directions.Length; i++)
+        {
+            if (IsDirectionNodeExist(start_node.index, move_directions[i]) == false)
+                continue;
+            if (IsDirectionNodeMoveAble(start_node.index, move_directions[i]) == false)
+                continue;
+
+            index = new Vector2Int(start_node.index.y + move_directions[i].y, start_node.index.x + move_directions[i].x);
+            node = node_data[index.x, index.y];
+            node.g = 1;
+            node.h = Mathf.Abs(end_node.index.y - index.y) + Mathf.Abs(end_node.index.x - index.x);
+            node.f = node.g + node.h;
+            node.parent_node = start_node;
+
+            opened_list.Add(node);
+        }
+
+        opened_list.Remove(start_node);
+        closed_list.Add(start_node);
+
+        bool route_exists;
+        Node min_f_value_node;
+
+        while (true)
+        {
+            //열린 목록에 끝 노드가 포함되어 있는 경우 -> 시작 노드에서 끝 노드로 가는 길을 찾은 경우
+            if (opened_list.Contains(end_node) == true)
+            {
+                route_exists = true;
+                break;
+            }
+            //열린 목록에 아무 것도 없는 경우 -> 시작 노드에서 끝 노드로 가는 길이 없는 경우
+            else if (opened_list.Count == 0)
+            {
+                route_exists = false;
+                break;
+            }
+
+            min_f_value_node = GetMinFValueNode(opened_list);
+
+            opened_list.Remove(min_f_value_node);
+            closed_list.Add(min_f_value_node);
+
+            for (int i = 0; i < move_directions.Length; i++)
+            {
+                if (IsDirectionNodeExist(min_f_value_node.index, move_directions[i]) == false)
+                    continue;
+                if (IsDirectionNodeMoveAble(min_f_value_node.index, move_directions[i]) == false)
+                    continue;
+
+                index = new Vector2Int(min_f_value_node.index.y + move_directions[i].y, min_f_value_node.index.x + move_directions[i].x);
+                node = node_data[index.x, index.y];
+
+                if (closed_list.Contains(node) == true)
+                    continue;
+
+                int temp_g = min_f_value_node.g + 1;
+                int temp_h = Mathf.Abs(end_node.index.y - index.y) + Mathf.Abs(end_node.index.x - index.x);
+                int temp_f = temp_g + temp_h;
+
+                if (opened_list.Contains(node) == true && temp_g < node.g)
+                {
+                    node.g = temp_g;
+                    node.h = temp_h;
+                    node.f = temp_f;
+                    node.parent_node = min_f_value_node;
+                }
+                else
+                {
+                    node.g = temp_g;
+                    node.h = temp_h;
+                    node.f = temp_f;
+                    node.parent_node = min_f_value_node;
+
+                    opened_list.Add(node);
+                }
+            }
+        }
+
+        if (route_exists == true)
+        {
+            node = end_node;
+            List<Vector2> route = new List<Vector2>();
+
+            while (node.parent_node != null)
+            {
+                route.Add(node.index);
+                node = node.parent_node;
+            }
+            route.Reverse();
+
+            return route;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    bool IsDirectionNodeExist(Vector2Int index, Vector2Int direction)
+    {
+        if (index.x + direction.x < 0
+            || index.x + direction.x >= map_tile_data_x_length
+            || index.y + direction.y < 0
+            || index.y + direction.y >= map_tile_data_y_length)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    bool IsDirectionNodeMoveAble(Vector2Int index, Vector2Int direction)
+    {
+        Vector2Int temp = new Vector2Int(index.x + direction.x, index.y + direction.y);
+
+        return Enum.IsDefined(typeof(MoveAbleTileType), (MoveAbleTileType)map_tile_data[temp.y, temp.x]);
+    }
+
+    Node GetMinFValueNode(List<Node> opened_list)
+    {
+        Node min_f_value_node = opened_list[0];
+
+        for (int i = 1; i < opened_list.Count; i++)
+        {
+            if (opened_list[i].f < min_f_value_node.f)
+                min_f_value_node = opened_list[i];
+        }
+
+        return min_f_value_node;
+    }
+
+    Vector3Int GetNodeIndexFrom(Vector3Int index)
+    {
+        return new Vector3Int(index.x + map_tile_data_half_x_length, index.y + map_tile_data_half_y_length, index.z);
     }
 }
